@@ -1,0 +1,1557 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2575.5">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="es"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;Análisis MCC - Comercios No Afiliados&lt;/title&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.js"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>body {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin: 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 20px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background-color: #f5f5f5;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.container {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>max-width: 1400px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin: 0 auto;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: white;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 30px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>box-shadow: 0 2px 10px rgba(0,0,0,0.1);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>h1, h2, h3 {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #333;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.upload-area {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border: 2px dashed #ccc;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 8px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 40px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>text-align: center;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin: 20px 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: #f9f9f9;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>cursor: pointer;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>transition: all 0.3s;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.upload-area:hover {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-color: #007bff;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: #f0f7ff;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.upload-area.dragging {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-color: #28a745;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: #e8f5e9;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.metrics-grid {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: grid;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));</p>
+<p class="p1"><span class="Apple-converted-space">            </span>gap: 20px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin: 30px 0;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.metric-card {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: white;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 25px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 8px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>box-shadow: 0 4px 6px rgba(0,0,0,0.1);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.metric-card h3 {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin: 0 0 10px 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 18px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: white;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>opacity: 0.9;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.metric-card .value {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 32px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-weight: bold;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.metric-card.orange {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.metric-card.green {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.metric-card.purple {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>table {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>width: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-collapse: collapse;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin: 20px 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 14px;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>th, td {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 12px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>text-align: left;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-bottom: 1px solid #e0e0e0;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>th {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background-color: #f8f9fa;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-weight: 600;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #495057;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>position: sticky;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>top: 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>z-index: 10;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>tr:hover {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background-color: #f8f9fa;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.chart-container {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>position: relative;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>height: 400px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin: 30px 0;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.insights-section {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: #f8f9fa;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 25px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 8px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin: 30px 0;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.insight-item {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin: 15px 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 15px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: white;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 6px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-left: 4px solid #007bff;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.tabs {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-bottom: 2px solid #e0e0e0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin: 30px 0 20px 0;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.tab {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 12px 24px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>cursor: pointer;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border: none;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: none;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 16px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #666;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>transition: all 0.3s;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.tab.active {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #007bff;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-bottom: 2px solid #007bff;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: -2px;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.tab-content {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: none;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>animation: fadeIn 0.5s;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.tab-content.active {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: block;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>@keyframes fadeIn {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>from { opacity: 0; }</p>
+<p class="p1"><span class="Apple-converted-space">            </span>to { opacity: 1; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.search-box {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin: 20px 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>position: relative;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.search-box input {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>width: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 12px 40px 12px 16px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border: 1px solid #ddd;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 6px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 16px;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.loading {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>text-align: center;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 40px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #666;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.spinner {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border: 3px solid #f3f3f3;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-top: 3px solid #007bff;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 50%;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>width: 40px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>height: 40px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>animation: spin 1s linear infinite;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin: 20px auto;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>@keyframes spin {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>0% { transform: rotate(0deg); }</p>
+<p class="p1"><span class="Apple-converted-space">            </span>100% { transform: rotate(360deg); }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.share-bar {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: #e0e0e0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>height: 20px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>overflow: hidden;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>position: relative;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin: 5px 0;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.share-fill {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>height: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>transition: width 0.3s ease;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.concentration-info {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: #f0f7ff;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 20px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 8px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin: 20px 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-left: 4px solid #007bff;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>#fileInput {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: none;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.category-badge {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: inline-block;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 4px 12px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 20px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 12px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-weight: 500;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: #e3f2fd;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #1976d2;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="container"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;h1&gt;🔍 Análisis de Comercios y MCC - Medios de Pago&lt;/h1&gt;</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="upload-area" id="uploadArea"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"&gt;&lt;/path&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;polyline points="7 10 12 15 17 10"&gt;&lt;/polyline&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;line x1="12" y1="15" x2="12" y2="3"&gt;&lt;/line&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/svg&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h3&gt;Arrastra tu archivo CSV aquí&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;p&gt;o haz clic para seleccionar&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;input type="file" id="fileInput" accept=".csv"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="loadingSection" class="loading" style="display: none;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="spinner"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;p&gt;Procesando archivo...&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="resultsSection" style="display: none;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="metrics-grid"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="metric-card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h3&gt;Total de Comercios&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="value" id="totalComercios"&gt;-&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="metric-card orange"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h3&gt;Monto Total&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="value" id="montoTotal"&gt;-&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="metric-card green"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h3&gt;Total Transacciones&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="value" id="totalTransacciones"&gt;-&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="metric-card purple"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h3&gt;Categorías MCC&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="value" id="totalCategorias"&gt;-&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="tabs"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button class="tab active" onclick="showTab('overview')"&gt;📊 Resumen General&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button class="tab" onclick="showTab('top50')"&gt;🏆 Top 50 Comercios&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button class="tab" onclick="showTab('top50share')"&gt;📈 Top 50 con Share&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button class="tab" onclick="showTab('categories')"&gt;📁 Por Categoría&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button class="tab" onclick="showTab('special')"&gt;🎯 Giros Especiales&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button class="tab" onclick="showTab('insights')"&gt;💡 Insights&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div id="overview" class="tab-content active"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h2&gt;Distribución por Categorías Principales&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="chart-container"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;canvas id="categoryChart"&gt;&lt;/canvas&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h2&gt;Top 10 Categorías por Monto&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="chart-container"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;canvas id="topCategoriesChart"&gt;&lt;/canvas&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div id="top50" class="tab-content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h2&gt;Top 50 Comercios por Monto Total&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="search-box"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;input type="text" id="searchTop50" placeholder="Buscar comercio..." onkeyup="filterTable('top50Table', this.value)"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div style="overflow-x: auto;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;table id="top50Table"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;thead&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;th&gt;Posición&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;th&gt;Razón Social&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;th&gt;Marca&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;th&gt;RFC&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;th&gt;MCC&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;th&gt;Categoría&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;th&gt;Monto Total&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;th&gt;Transacciones&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;th&gt;Ticket Promedio&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/thead&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;tbody id="top50Body"&gt;&lt;/tbody&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/table&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div id="top50share" class="tab-content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h2 id="top50Title"&gt;Top 50 RFC - Consumo Total Acumulado&lt;/h2&gt;</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div style="background: #e3f2fd; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #1976d2;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h3 style="margin-top: 0; color: #1976d2;"&gt;📊 Modo de Visualización&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;select id="groupModeSelect" onchange="displayTop50WithShare()" style="padding: 10px 20px; border: 2px solid #1976d2; border-radius: 5px; font-size: 16px; font-weight: bold;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;option value="rfc"&gt;🏢 Top 50 RFC - Consumo Total Acumulado&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;option value="razonSocial"&gt;🏪 Top 50 Comercios - Por Razón Social&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p style="margin: 10px 0 0 0; color: #555;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;strong&gt;Modo RFC:&lt;/strong&gt; Suma TODOS los consumos de cada contribuyente, sin importar cuántas razones sociales o sucursales tenga.&lt;br&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;strong&gt;Ejemplo:&lt;/strong&gt; Si OXXO (RFC: OXX930819GI8) tiene 100 sucursales, se suman todas en un solo registro.</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="metrics-grid" style="margin-bottom: 30px;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="metric-card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;h3&gt;Share Top 50&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="value" id="shareTop50"&gt;-&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="metric-card orange"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;h3&gt;Consumo Total Top 50&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="value" id="montoTop50"&gt;-&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="metric-card green"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;h3&gt;Transacciones Top 50&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="value" id="transaccionesTop50"&gt;-&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="search-box"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;input type="text" id="searchTop50Share" placeholder="Buscar RFC o comercio..." onkeyup="filterTable('top50ShareTable', this.value)"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div style="margin: 20px 0;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button onclick="exportTop50ToCSV()" style="padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>📥 Exportar Top 50 a CSV</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button onclick="showRFCAnalysis()" style="padding: 10px 20px; background: #17a2b8; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px; font-weight: bold;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>📈 Ver Análisis Detallado RFC</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div style="overflow-x: auto;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;table id="top50ShareTable"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;thead&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;th style="width: 50px;"&gt;Rank&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;th&gt;RFC&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;th&gt;Razones Sociales&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;th&gt;Categorías&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;th&gt;MCCs&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;th&gt;Registros&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;th&gt;Consumo Total&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;th&gt;Transacciones&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;th&gt;Share (%)&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;th&gt;Share Acum. (%)&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;th&gt;Ticket Prom.&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/thead&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;tbody id="top50ShareBody"&gt;&lt;/tbody&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/table&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="concentration-info" id="concentrationInfo" style="margin-top: 30px;"&gt;&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="chart-container" style="margin-top: 40px;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h3&gt;Curva de Concentración - Top 50 RFC por Consumo Acumulado&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;canvas id="concentrationChart"&gt;&lt;/canvas&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div id="rfcAnalysisModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div style="background: white; margin: 50px auto; padding: 30px; max-width: 90%; max-height: 80%; overflow-y: auto; border-radius: 10px;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;h3&gt;Análisis Detallado de RFC&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div id="rfcAnalysisContent"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;button onclick="closeRFCAnalysis()" style="margin-top: 20px; padding: 10px 20px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>Cerrar</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div id="categories" class="tab-content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h2&gt;Análisis por Categoría MCC&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="search-box"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;input type="text" id="searchCategories" placeholder="Buscar categoría..." onkeyup="filterTable('categoriesTable', this.value)"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;table id="categoriesTable"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;thead&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;th&gt;Categoría&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;th&gt;Comercios&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;th&gt;Monto Total&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;th&gt;Transacciones&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;th&gt;% del Total&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;th&gt;Ticket Promedio&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/thead&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;tbody id="categoriesBody"&gt;&lt;/tbody&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/table&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div id="special" class="tab-content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h2&gt;Giros Especiales Identificados&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div id="specialBusinesses"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div id="insights" class="tab-content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h2&gt;Insights y Análisis Detallado&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="insights-section" id="insightsContent"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Mapeo completo de categorías MCC para México</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const mccCategories = {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Transporte</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"4111": { category: "Transporte", description: "Transporte Local/Suburbano" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"4112": { category: "Transporte", description: "Ferrocarriles de Pasajeros" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"4121": { category: "Transporte", description: "Taxis y Limosinas" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"4131": { category: "Transporte", description: "Líneas de Autobús" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"4214": { category: "Transporte", description: "Transportistas de Carga" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"4215": { category: "Transporte", description: "Servicios de Mensajería" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"4225": { category: "Transporte", description: "Almacenamiento" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"4411": { category: "Transporte", description: "Líneas de Cruceros" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"4457": { category: "Transporte", description: "Renta de Botes" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"4468": { category: "Transporte", description: "Puertos Deportivos" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"4511": { category: "Transporte", description: "Aerolíneas" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"4582": { category: "Transporte", description: "Aeropuertos" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"4722": { category: "Viajes", description: "Agencias de Viajes" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"4723": { category: "Viajes", description: "Paquetes Turísticos" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"4784": { category: "Transporte", description: "Casetas de Peaje" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"4789": { category: "Transporte", description: "Servicios de Transporte" },</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Alojamiento - Hoteles específicos (3501-3790)</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"3501": { category: "Alojamiento", description: "Holiday Inn" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"3502": { category: "Alojamiento", description: "Best Western" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"3503": { category: "Alojamiento", description: "Sheraton" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"3504": { category: "Alojamiento", description: "Hilton" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"3700": { category: "Alojamiento", description: "Hoteles (General)" },</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Restaurantes y Comida</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5411": { category: "Supermercados", description: "Supermercados" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5412": { category: "Tiendas de Conveniencia", description: "Tiendas de Conveniencia" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5422": { category: "Alimentos", description: "Carnicerías" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5441": { category: "Alimentos", description: "Dulcerías" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5451": { category: "Alimentos", description: "Lecherías" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5462": { category: "Alimentos", description: "Panaderías" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5499": { category: "Alimentos", description: "Tiendas de Alimentos Especializados" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5811": { category: "Restaurantes", description: "Catering" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5812": { category: "Restaurantes", description: "Restaurantes" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5813": { category: "Bares y Cantinas", description: "Bares y Cantinas" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5814": { category: "Restaurantes", description: "Comida Rápida" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5815": { category: "Restaurantes", description: "Cafeterías" },</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Comercio al por menor</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5200": { category: "Hogar", description: "Tiendas de Mejoras para el Hogar" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5211": { category: "Construcción", description: "Madererías" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5231": { category: "Construcción", description: "Tiendas de Pintura y Vidrio" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5251": { category: "Ferreterías", description: "Ferreterías" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5261": { category: "Hogar", description: "Viveros" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5300": { category: "Tiendas de Membresía", description: "Tiendas de Membresía" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5309": { category: "Comercio", description: "Tiendas Duty Free" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5310": { category: "Tiendas de Descuento", description: "Tiendas de Descuento" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5311": { category: "Tiendas Departamentales", description: "Tiendas Departamentales" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5331": { category: "Comercio", description: "Tiendas de Variedad" },</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Ropa y Accesorios</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5611": { category: "Ropa", description: "Ropa para Hombres" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5621": { category: "Ropa", description: "Ropa para Mujeres" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5631": { category: "Ropa", description: "Accesorios para Mujeres" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5641": { category: "Ropa", description: "Ropa para Niños" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5651": { category: "Ropa", description: "Ropa Familiar" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5655": { category: "Ropa", description: "Ropa Deportiva" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5661": { category: "Calzado", description: "Zapaterías" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5691": { category: "Ropa", description: "Ropa para Hombres y Mujeres" },</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Entretenimiento y Servicios</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"7032": { category: "Deportes", description: "Campos y Clubes Deportivos" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"7033": { category: "Recreación", description: "Campamentos y Trailers" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"7210": { category: "Servicios", description: "Servicios de Lavandería" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"7211": { category: "Servicios", description: "Lavanderías" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"7216": { category: "Servicios", description: "Tintorerías" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"7230": { category: "Belleza", description: "Salones de Belleza" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"7261": { category: "Servicios", description: "Servicios Funerarios" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"7297": { category: "Belleza", description: "Masajes" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"7298": { category: "Belleza", description: "Spas" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"7311": { category: "Servicios Profesionales", description: "Servicios de Publicidad" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"7372": { category: "Tecnología", description: "Servicios de Programación" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"7392": { category: "Servicios Profesionales", description: "Servicios de Consultoría" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"7511": { category: "Renta de Vehículos", description: "Renta de Camiones" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"7512": { category: "Renta de Vehículos", description: "Renta de Autos" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"7523": { category: "Estacionamientos", description: "Estacionamientos" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"7531": { category: "Automotriz", description: "Talleres de Carrocería" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"7534": { category: "Automotriz", description: "Servicios de Llantas" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"7538": { category: "Automotriz", description: "Talleres Automotrices" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"7542": { category: "Automotriz", description: "Lavados de Autos" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"7832": { category: "Entretenimiento", description: "Cines" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"7841": { category: "Entretenimiento", description: "Renta de Videos" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"7911": { category: "Entretenimiento", description: "Salones de Baile" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"7932": { category: "Entretenimiento", description: "Billares" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"7933": { category: "Entretenimiento", description: "Boliches" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"7941": { category: "Deportes", description: "Clubes Deportivos" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"7991": { category: "Entretenimiento", description: "Atracciones Turísticas" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"7992": { category: "Deportes", description: "Campos de Golf" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"7993": { category: "Entretenimiento", description: "Parques de Diversiones" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"7994": { category: "Entretenimiento", description: "Videojuegos" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"7995": { category: "Casinos y Apuestas", description: "Apuestas/Casinos" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"7996": { category: "Entretenimiento", description: "Circos y Carnavales" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"7997": { category: "Entretenimiento", description: "Clubes" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"7998": { category: "Entretenimiento", description: "Acuarios" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"7999": { category: "Entretenimiento", description: "Servicios de Recreación" },</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Servicios Profesionales y Salud</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"8011": { category: "Salud", description: "Doctores" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"8021": { category: "Salud", description: "Dentistas" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"8031": { category: "Salud", description: "Osteópatas" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"8041": { category: "Salud", description: "Quiroprácticos" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"8042": { category: "Salud", description: "Optometristas" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"8043": { category: "Salud", description: "Ópticas" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"8049": { category: "Salud", description: "Podiatras" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"8050": { category: "Salud", description: "Enfermería" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"8062": { category: "Salud", description: "Hospitales" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"8071": { category: "Salud", description: "Laboratorios Médicos" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"8099": { category: "Salud", description: "Servicios Médicos" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"8111": { category: "Servicios Legales", description: "Servicios Legales" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"8211": { category: "Educación", description: "Escuelas Primarias y Secundarias" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"8220": { category: "Educación", description: "Universidades" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"8241": { category: "Educación", description: "Escuelas por Correspondencia" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"8244": { category: "Educación", description: "Escuelas de Negocios" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"8249": { category: "Educación", description: "Escuelas Vocacionales" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"8299": { category: "Educación", description: "Servicios Educativos" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"8351": { category: "Servicios", description: "Guarderías" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"8398": { category: "Organizaciones", description: "Organizaciones de Caridad" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"8641": { category: "Organizaciones", description: "Asociaciones Cívicas" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"8651": { category: "Organizaciones", description: "Organizaciones Políticas" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"8661": { category: "Organizaciones", description: "Organizaciones Religiosas" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"8675": { category: "Organizaciones", description: "Asociaciones de Automóviles" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"8699": { category: "Organizaciones", description: "Organizaciones de Membresía" },</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Gobierno</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"9211": { category: "Gobierno", description: "Servicios de Corte" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"9222": { category: "Gobierno", description: "Multas" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"9223": { category: "Gobierno", description: "Fianzas" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"9311": { category: "Gobierno", description: "Pagos de Impuestos" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"9399": { category: "Gobierno", description: "Servicios de Gobierno" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"9402": { category: "Gobierno", description: "Servicios Postales" },</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Comercios especiales</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5912": { category: "Farmacias", description: "Farmacias" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5921": { category: "Vinaterías y Licores", description: "Licorerías/Vinaterías" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5122": { category: "Farmacias", description: "Medicamentos" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5993": { category: "Tabaquerías", description: "Tabaquerías" },</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Telecomunicaciones</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"4812": { category: "Telecomunicaciones", description: "Servicios de Telecomunicaciones" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"4813": { category: "Telecomunicaciones", description: "Larga Distancia" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"4814": { category: "Telecomunicaciones", description: "Llamadas Telefónicas" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"4899": { category: "Telecomunicaciones", description: "Servicios de Cable" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"4900": { category: "Servicios Públicos", description: "Servicios Públicos" },</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Gasolinerías</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5541": { category: "Gasolineras", description: "Gasolineras con Servicio" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5542": { category: "Gasolineras", description: "Gasolineras de Autoservicio" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5983": { category: "Combustibles", description: "Combustóleo" },</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Servicios Financieros</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"6010": { category: "Servicios Financieros", description: "Retiros de Efectivo Manual" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"6011": { category: "Servicios Financieros", description: "Retiros de Efectivo ATM" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"6012": { category: "Servicios Financieros", description: "Instituciones Financieras" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"6051": { category: "Servicios Financieros", description: "Cuasi Efectivo" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"6211": { category: "Servicios Financieros", description: "Corredurías de Valores" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"6300": { category: "Seguros", description: "Seguros" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"6513": { category: "Bienes Raíces", description: "Agentes de Bienes Raíces" },</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// E-commerce y tecnología</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5045": { category: "Tecnología", description: "Computadoras y Software" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5732": { category: "Electrónicos", description: "Tiendas de Electrónicos" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5734": { category: "Tecnología", description: "Software de Computadoras" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5735": { category: "Electrónicos", description: "Tiendas de Discos" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5815": { category: "Digital", description: "Audio/Video Digital" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5816": { category: "Digital", description: "Videojuegos Digitales" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5817": { category: "Digital", description: "Aplicaciones Digitales" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5818": { category: "Digital", description: "Suscripciones Digitales" },</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Otros</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5111": { category: "Papelerías", description: "Papelerías" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5137": { category: "Ropa", description: "Uniformes" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5192": { category: "Librerías", description: "Librerías" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5193": { category: "Floristerías", description: "Floristerías" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5712": { category: "Hogar", description: "Muebles" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5722": { category: "Hogar", description: "Aparatos del Hogar" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5733": { category: "Música", description: "Instrumentos Musicales" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5940": { category: "Deportes", description: "Bicicletas" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5941": { category: "Deportes", description: "Artículos Deportivos" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5942": { category: "Librerías", description: "Librerías" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5943": { category: "Papelerías", description: "Papelerías y Artículos de Oficina" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5944": { category: "Joyerías", description: "Relojerías y Joyerías" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5945": { category: "Jugueterías", description: "Jugueterías" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5946": { category: "Fotografía", description: "Tiendas de Cámaras" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5947": { category: "Regalos", description: "Tiendas de Regalos" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5970": { category: "Arte", description: "Tiendas de Arte" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5971": { category: "Arte", description: "Galerías de Arte" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5977": { category: "Belleza", description: "Cosméticos" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5992": { category: "Floristerías", description: "Florerías" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5995": { category: "Mascotas", description: "Tiendas de Mascotas" },</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"5999": { category: "Comercio General", description: "Tiendas Misceláneas" }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Variables globales</p>
+<p class="p1"><span class="Apple-converted-space">        </span>let processedData = [];</p>
+<p class="p1"><span class="Apple-converted-space">        </span>let categoryTotals = {};</p>
+<p class="p1"><span class="Apple-converted-space">        </span>let specialBusinesses = {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>vinaterias: [],</p>
+<p class="p1"><span class="Apple-converted-space">            </span>casinos: [],</p>
+<p class="p1"><span class="Apple-converted-space">            </span>bares: [],</p>
+<p class="p1"><span class="Apple-converted-space">            </span>tabacos: [],</p>
+<p class="p1"><span class="Apple-converted-space">            </span>apuestas: []</p>
+<p class="p1"><span class="Apple-converted-space">        </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Configuración de eventos</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const uploadArea = document.getElementById('uploadArea');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const fileInput = document.getElementById('fileInput');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>uploadArea.addEventListener('click', () =&gt; fileInput.click());</p>
+<p class="p1"><span class="Apple-converted-space">        </span>uploadArea.addEventListener('dragover', (e) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>e.preventDefault();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>uploadArea.classList.add('dragging');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>uploadArea.addEventListener('dragleave', () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>uploadArea.classList.remove('dragging');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>uploadArea.addEventListener('drop', (e) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>e.preventDefault();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>uploadArea.classList.remove('dragging');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const files = e.dataTransfer.files;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (files.length &gt; 0) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>handleFile(files[0]);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>fileInput.addEventListener('change', (e) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (e.target.files.length &gt; 0) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>handleFile(e.target.files[0]);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function handleFile(file) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (!file.name.endsWith('.csv')) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>alert('Por favor selecciona un archivo CSV');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('loadingSection').style.display = 'block';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('uploadArea').style.display = 'none';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>Papa.parse(file, {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>header: true,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>dynamicTyping: false,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>skipEmptyLines: true,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>complete: function(results) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>processData(results.data);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>},</p>
+<p class="p1"><span class="Apple-converted-space">                </span>error: function(error) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>alert('Error al leer el archivo: ' + error.message);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>document.getElementById('loadingSection').style.display = 'none';</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>document.getElementById('uploadArea').style.display = 'block';</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function cleanMonto(montoStr) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (!montoStr) return 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const cleaned = String(montoStr).replace(/[$,\s]/g, '');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>return parseFloat(cleaned) || 0;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function formatMoney(amount) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>return new Intl.NumberFormat('es-MX', {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>style: 'currency',</p>
+<p class="p1"><span class="Apple-converted-space">                </span>currency: 'MXN',</p>
+<p class="p1"><span class="Apple-converted-space">                </span>minimumFractionDigits: 0,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>maximumFractionDigits: 0</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}).format(amount);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function formatNumber(num) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>return new Intl.NumberFormat('es-MX').format(num);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function processData(data) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Procesar cada registro</p>
+<p class="p1"><span class="Apple-converted-space">            </span>processedData = data.map(row =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const mcc = String(row.mcc || '').padStart(4, '0');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const monto = cleanMonto(row[' monto '] || row.monto);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const transacciones = parseInt(row.transacciones) || 0;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const mccInfo = mccCategories[mcc] || { category: "No Categorizado", description: "MCC no identificado" };</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>// Identificar giros especiales por MCC o nombre</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const razonSocial = (row['Razon _Social'] || row.razon_social || '').toUpperCase();</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const marca = (row.MARCA || '').toUpperCase();</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const rfc = (row.RFC || '').toUpperCase();</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>return {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>...row,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>mcc: mcc,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>monto: monto,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>transacciones: transacciones,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>ticketPromedio: transacciones &gt; 0 ? monto / transacciones : 0,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>category: mccInfo.category,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>description: mccInfo.description,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>razonSocialClean: razonSocial,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>marcaClean: marca</p>
+<p class="p1"><span class="Apple-converted-space">                </span>};</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Identificar giros especiales</p>
+<p class="p1"><span class="Apple-converted-space">            </span>processedData.forEach(row =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>// Vinaterías y licores</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (row.mcc === '5921' ||<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>row.razonSocialClean.includes('VINATERIA') ||<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>row.razonSocialClean.includes('LICORES') ||</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>row.razonSocialClean.includes('VINOS') ||</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>row.marcaClean.includes('MODELORAMA') ||</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>row.marcaClean.includes('OXXO BEER')) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>specialBusinesses.vinaterias.push(row);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>// Casinos</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (row.mcc === '7995' ||<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>row.razonSocialClean.includes('CASINO') ||</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>row.razonSocialClean.includes('CALIENTE') ||</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>row.razonSocialClean.includes('PLAY CITY')) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>specialBusinesses.casinos.push(row);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>// Bares y cantinas</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (row.mcc === '5813' ||<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>row.razonSocialClean.includes('BAR') ||</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>row.razonSocialClean.includes('CANTINA') ||</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>row.razonSocialClean.includes('CERVECERIA')) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>specialBusinesses.bares.push(row);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>// Tabaquerías</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (row.mcc === '5993' ||<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>row.razonSocialClean.includes('TABACO') ||</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>row.razonSocialClean.includes('CIGARR')) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>specialBusinesses.tabacos.push(row);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>// Apuestas</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (row.razonSocialClean.includes('APUESTA') ||</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>row.razonSocialClean.includes('SORTEO') ||</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>row.razonSocialClean.includes('PRONOSTIC')) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>specialBusinesses.apuestas.push(row);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Calcular totales por categoría</p>
+<p class="p1"><span class="Apple-converted-space">            </span>categoryTotals = processedData.reduce((acc, row) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (!acc[row.category]) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>acc[row.category] = {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>count: 0,</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>monto: 0,</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>transacciones: 0,</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>comercios: new Set()</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>};</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>acc[row.category].count++;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>acc[row.category].monto += row.monto;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>acc[row.category].transacciones += row.transacciones;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>acc[row.category].comercios.add(row['Razon _Social'] || row.razon_social);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>return acc;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}, {});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>displayResults();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function displayResults() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('loadingSection').style.display = 'none';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('resultsSection').style.display = 'block';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Métricas generales</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const totalMonto = processedData.reduce((sum, row) =&gt; sum + row.monto, 0);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const totalTransacciones = processedData.reduce((sum, row) =&gt; sum + row.transacciones, 0);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const uniqueBusinesses = new Set(processedData.map(row =&gt; row['Razon _Social'] || row.razon_social)).size;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('totalComercios').textContent = formatNumber(uniqueBusinesses);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('montoTotal').textContent = formatMoney(totalMonto);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('totalTransacciones').textContent = formatNumber(totalTransacciones);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('totalCategorias').textContent = Object.keys(categoryTotals).length;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Gráficas</p>
+<p class="p1"><span class="Apple-converted-space">            </span>createCategoryChart();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>createTopCategoriesChart();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Top 50 comercios</p>
+<p class="p1"><span class="Apple-converted-space">            </span>displayTop50();</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Establecer modo por defecto como RFC</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (document.getElementById('groupModeSelect')) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>document.getElementById('groupModeSelect').value = 'rfc';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Top 50 con Share</p>
+<p class="p1"><span class="Apple-converted-space">            </span>displayTop50WithShare();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Categorías</p>
+<p class="p1"><span class="Apple-converted-space">            </span>displayCategories();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Giros especiales</p>
+<p class="p1"><span class="Apple-converted-space">            </span>displaySpecialBusinesses();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Insights</p>
+<p class="p1"><span class="Apple-converted-space">            </span>generateInsights();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function createCategoryChart() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const ctx = document.getElementById('categoryChart').getContext('2d');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const sortedCategories = Object.entries(categoryTotals)</p>
+<p class="p1"><span class="Apple-converted-space">                </span>.sort((a, b) =&gt; b[1].monto - a[1].monto)</p>
+<p class="p1"><span class="Apple-converted-space">                </span>.slice(0, 10);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>new Chart(ctx, {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>type: 'pie',</p>
+<p class="p1"><span class="Apple-converted-space">                </span>data: {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>labels: sortedCategories.map(([cat, _]) =&gt; cat),</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>datasets: [{</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>data: sortedCategories.map(([_, data]) =&gt; data.monto),</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>backgroundColor: [</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>'#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>'#FF9F40', '#FF6384', '#C9CBCF', '#4BC0C0', '#36A2EB'</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>]</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}]</p>
+<p class="p1"><span class="Apple-converted-space">                </span>},</p>
+<p class="p1"><span class="Apple-converted-space">                </span>options: {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>responsive: true,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>maintainAspectRatio: false,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>plugins: {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>legend: {</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>position: 'right'</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>},</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>tooltip: {</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>callbacks: {</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>label: function(context) {</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>const label = context.label || '';</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>const value = formatMoney(context.parsed);</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>const percentage = ((context.parsed / context.dataset.data.reduce((a, b) =&gt; a + b)) * 100).toFixed(1);</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>return `${label}: ${value} (${percentage}%)`;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function createTopCategoriesChart() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const ctx = document.getElementById('topCategoriesChart').getContext('2d');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const sortedCategories = Object.entries(categoryTotals)</p>
+<p class="p1"><span class="Apple-converted-space">                </span>.sort((a, b) =&gt; b[1].monto - a[1].monto)</p>
+<p class="p1"><span class="Apple-converted-space">                </span>.slice(0, 10);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>new Chart(ctx, {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>type: 'bar',</p>
+<p class="p1"><span class="Apple-converted-space">                </span>data: {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>labels: sortedCategories.map(([cat, _]) =&gt; cat),</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>datasets: [{</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>label: 'Monto Total',</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>data: sortedCategories.map(([_, data]) =&gt; data.monto),</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>backgroundColor: '#36A2EB'</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}]</p>
+<p class="p1"><span class="Apple-converted-space">                </span>},</p>
+<p class="p1"><span class="Apple-converted-space">                </span>options: {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>responsive: true,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>maintainAspectRatio: false,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>scales: {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>y: {</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>beginAtZero: true,</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>ticks: {</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>callback: function(value) {</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>return formatMoney(value);</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>},</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>plugins: {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>tooltip: {</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>callbacks: {</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>label: function(context) {</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>return formatMoney(context.parsed.y);</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function displayTop50() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const sortedByAmount = [...processedData].sort((a, b) =&gt; b.monto - a.monto).slice(0, 50);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const tbody = document.getElementById('top50Body');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>tbody.innerHTML = '';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>sortedByAmount.forEach((row, index) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const tr = document.createElement('tr');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>tr.innerHTML = `</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;td&gt;${index + 1}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;td&gt;${row['Razon _Social'] || row.razon_social || 'N/A'}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;td&gt;${row.MARCA || 'N/A'}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;td&gt;${row.RFC || 'N/A'}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;td&gt;${row.mcc}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;td&gt;&lt;span class="category-badge"&gt;${row.category}&lt;/span&gt;&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;td&gt;${formatMoney(row.monto)}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;td&gt;${formatNumber(row.transacciones)}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;td&gt;${formatMoney(row.ticketPromedio)}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>tbody.appendChild(tr);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function displayCategories() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const tbody = document.getElementById('categoriesBody');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>tbody.innerHTML = '';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const totalMonto = processedData.reduce((sum, row) =&gt; sum + row.monto, 0);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>Object.entries(categoryTotals)</p>
+<p class="p1"><span class="Apple-converted-space">                </span>.sort((a, b) =&gt; b[1].monto - a[1].monto)</p>
+<p class="p1"><span class="Apple-converted-space">                </span>.forEach(([category, data]) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const tr = document.createElement('tr');</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>tr.innerHTML = `</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td&gt;${category}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td&gt;${data.comercios.size}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td&gt;${formatMoney(data.monto)}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td&gt;${formatNumber(data.transacciones)}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td&gt;${((data.monto / totalMonto) * 100).toFixed(2)}%&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td&gt;${formatMoney(data.monto / data.transacciones)}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>tbody.appendChild(tr);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function displaySpecialBusinesses() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const container = document.getElementById('specialBusinesses');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let html = '';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Vinaterías</p>
+<p class="p1"><span class="Apple-converted-space">            </span>html += `&lt;div class="insight-item"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h3&gt;🍷 Vinaterías y Licores (${specialBusinesses.vinaterias.length} comercios)&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p&gt;Monto total: ${formatMoney(specialBusinesses.vinaterias.reduce((sum, r) =&gt; sum + r.monto, 0))}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p&gt;Transacciones: ${formatNumber(specialBusinesses.vinaterias.reduce((sum, r) =&gt; sum + r.transacciones, 0))}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;details&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;summary&gt;Ver detalles&lt;/summary&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;ul&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>${specialBusinesses.vinaterias.slice(0, 10).map(r =&gt;<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                            </span>`&lt;li&gt;${r['Razon _Social'] || r.razon_social} - ${formatMoney(r.monto)}&lt;/li&gt;`</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>).join('')}</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/ul&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/details&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;`;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Casinos</p>
+<p class="p1"><span class="Apple-converted-space">            </span>html += `&lt;div class="insight-item"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h3&gt;🎰 Casinos y Apuestas (${specialBusinesses.casinos.length} comercios)&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p&gt;Monto total: ${formatMoney(specialBusinesses.casinos.reduce((sum, r) =&gt; sum + r.monto, 0))}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p&gt;Transacciones: ${formatNumber(specialBusinesses.casinos.reduce((sum, r) =&gt; sum + r.transacciones, 0))}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;details&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;summary&gt;Ver detalles&lt;/summary&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;ul&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>${specialBusinesses.casinos.slice(0, 10).map(r =&gt;<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                            </span>`&lt;li&gt;${r['Razon _Social'] || r.razon_social} - ${formatMoney(r.monto)}&lt;/li&gt;`</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>).join('')}</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/ul&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/details&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;`;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Bares</p>
+<p class="p1"><span class="Apple-converted-space">            </span>html += `&lt;div class="insight-item"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h3&gt;🍺 Bares y Cantinas (${specialBusinesses.bares.length} comercios)&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p&gt;Monto total: ${formatMoney(specialBusinesses.bares.reduce((sum, r) =&gt; sum + r.monto, 0))}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p&gt;Transacciones: ${formatNumber(specialBusinesses.bares.reduce((sum, r) =&gt; sum + r.transacciones, 0))}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;details&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;summary&gt;Ver detalles&lt;/summary&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;ul&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>${specialBusinesses.bares.slice(0, 10).map(r =&gt;<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                            </span>`&lt;li&gt;${r['Razon _Social'] || r.razon_social} - ${formatMoney(r.monto)}&lt;/li&gt;`</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>).join('')}</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/ul&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/details&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;`;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Tabaquerías</p>
+<p class="p1"><span class="Apple-converted-space">            </span>html += `&lt;div class="insight-item"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h3&gt;🚬 Tabaquerías (${specialBusinesses.tabacos.length} comercios)&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p&gt;Monto total: ${formatMoney(specialBusinesses.tabacos.reduce((sum, r) =&gt; sum + r.monto, 0))}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p&gt;Transacciones: ${formatNumber(specialBusinesses.tabacos.reduce((sum, r) =&gt; sum + r.transacciones, 0))}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;`;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>container.innerHTML = html;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function generateInsights() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const container = document.getElementById('insightsContent');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const totalMonto = processedData.reduce((sum, row) =&gt; sum + row.monto, 0);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const totalTransacciones = processedData.reduce((sum, row) =&gt; sum + row.transacciones, 0);</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Análisis de ticket promedio</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const ticketPromedio = totalMonto / totalTransacciones;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const ticketsAltos = processedData.filter(r =&gt; r.ticketPromedio &gt; ticketPromedio * 3);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const ticketsBajos = processedData.filter(r =&gt; r.ticketPromedio &lt; ticketPromedio / 3);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Comercios con más transacciones</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const topPorTransacciones = [...processedData].sort((a, b) =&gt; b.transacciones - a.transacciones).slice(0, 10);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// MCCs no categorizados</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const noCategorizados = processedData.filter(r =&gt; r.category === "No Categorizado");</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>let html = `</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="insight-item"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h3&gt;📊 Resumen Ejecutivo&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p&gt;Se analizaron &lt;strong&gt;${formatNumber(processedData.length)}&lt;/strong&gt; registros de comercios no afiliados.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p&gt;El ticket promedio general es de &lt;strong&gt;${formatMoney(ticketPromedio)}&lt;/strong&gt;.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p&gt;Las categorías con mayor volumen son: ${Object.entries(categoryTotals)</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>.sort((a, b) =&gt; b[1].monto - a[1].monto)</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>.slice(0, 3)</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>.map(([cat, data]) =&gt; `&lt;strong&gt;${cat}&lt;/strong&gt; (${((data.monto/totalMonto)*100).toFixed(1)}%)`)</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>.join(', ')}.</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="insight-item"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h3&gt;💳 Comportamiento de Consumo&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p&gt;&lt;strong&gt;Tickets altos:&lt;/strong&gt; ${ticketsAltos.length} comercios tienen tickets promedio superiores a ${formatMoney(ticketPromedio * 3)}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p&gt;&lt;strong&gt;Tickets bajos:&lt;/strong&gt; ${ticketsBajos.length} comercios tienen tickets promedio menores a ${formatMoney(ticketPromedio / 3)}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p&gt;Los comercios con más transacciones son principalmente de las categorías: ${</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>[...new Set(topPorTransacciones.slice(0, 5).map(r =&gt; r.category))].join(', ')</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="insight-item"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h3&gt;🎯 Giros Especiales Detectados&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p&gt;&lt;strong&gt;Entretenimiento adulto:&lt;/strong&gt; ${formatMoney(</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>(specialBusinesses.casinos.reduce((s, r) =&gt; s + r.monto, 0) +</p>
+<p class="p1"><span class="Apple-converted-space">                         </span>specialBusinesses.bares.reduce((s, r) =&gt; s + r.monto, 0))</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>)} en casinos, bares y cantinas&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p&gt;&lt;strong&gt;Bebidas alcohólicas:&lt;/strong&gt; ${formatMoney(</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>specialBusinesses.vinaterias.reduce((s, r) =&gt; s + r.monto, 0)</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>)} en vinaterías y licores&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p&gt;&lt;strong&gt;Tabaco:&lt;/strong&gt; ${formatMoney(</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>specialBusinesses.tabacos.reduce((s, r) =&gt; s + r.monto, 0)</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>)} en tabaquerías&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="insight-item"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h3&gt;⚠️ Comercios No Categorizados&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p&gt;Se encontraron &lt;strong&gt;${noCategorizados.length}&lt;/strong&gt; registros sin categoría MCC identificada.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p&gt;Estos representan &lt;strong&gt;${formatMoney(noCategorizados.reduce((s, r) =&gt; s + r.monto, 0))}&lt;/strong&gt; en volumen.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p&gt;Se recomienda revisar manualmente estos comercios para mejorar la categorización.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="insight-item"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;h3&gt;🔍 Recomendaciones&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;ul&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;li&gt;Revisar los comercios con MCCs no categorizados para completar el mapeo&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;li&gt;Analizar los comercios con tickets muy altos para identificar posibles fraudes&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;li&gt;Considerar estrategias específicas para los giros de mayor volumen&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;li&gt;Implementar alertas para transacciones en giros sensibles (casinos, apuestas)&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;li&gt;Desarrollar campañas dirigidas a las categorías con mayor potencial de crecimiento&lt;/li&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/ul&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>`;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>container.innerHTML = html;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function displayTop50WithShare() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const totalMonto = processedData.reduce((sum, row) =&gt; sum + row.monto, 0);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const totalTransacciones = processedData.reduce((sum, row) =&gt; sum + row.transacciones, 0);</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Obtener el modo de agrupación seleccionado</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const groupMode = document.getElementById('groupModeSelect') ?<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>document.getElementById('groupModeSelect').value : 'rfc';</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Actualizar título según el modo</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const titleElement = document.getElementById('top50Title');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (titleElement) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>titleElement.textContent = groupMode === 'rfc' ?<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>'Top 50 RFC - Consumo Total Acumulado' :<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>'Top 50 Comercios - Por Razón Social';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Agrupar según el modo seleccionado</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const comerciosAgrupados = {};</p>
+<p class="p1"><span class="Apple-converted-space">            </span>processedData.forEach(row =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>let key;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (groupMode === 'rfc') {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>// Normalizar RFC: quitar espacios, convertir a mayúsculas</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const rfcNormalizado = (row.RFC || '').toString().trim().toUpperCase();</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>// Si no hay RFC o está vacío, usar "SIN_RFC" + un identificador único</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>key = rfcNormalizado &amp;&amp; rfcNormalizado !== 'N/A' &amp;&amp; rfcNormalizado !== '' ?<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                        </span>rfcNormalizado : `SIN_RFC_${row['Razon _Social'] || row.razon_social || 'DESCONOCIDO'}`;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>key = row['Razon _Social'] || row.razon_social || 'SIN_NOMBRE';</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (!comerciosAgrupados[key]) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>comerciosAgrupados[key] = {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>key: key,</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>razonSocial: new Set(),</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>marca: new Set(),</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>rfc: groupMode === 'rfc' ? key : row.RFC || 'N/A',</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>categories: new Set(),</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>monto: 0,</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>transacciones: 0,</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>registros: 0,</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>mccs: new Set(),</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>detalleRegistros: []</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>};</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>// Agregar datos únicos</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const razonSocial = row['Razon _Social'] || row.razon_social;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (razonSocial) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>comerciosAgrupados[key].razonSocial.add(razonSocial);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>const marca = row.MARCA;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (marca &amp;&amp; marca !== 'N/A') {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>comerciosAgrupados[key].marca.add(marca);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>comerciosAgrupados[key].categories.add(row.category);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>comerciosAgrupados[key].mccs.add(row.mcc);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>comerciosAgrupados[key].monto += row.monto;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>comerciosAgrupados[key].transacciones += row.transacciones;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>comerciosAgrupados[key].registros++;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>comerciosAgrupados[key].detalleRegistros.push({</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>razonSocial: razonSocial,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>marca: marca,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>monto: row.monto,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>transacciones: row.transacciones,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>mcc: row.mcc,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>category: row.category</p>
+<p class="p1"><span class="Apple-converted-space">                </span>});</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Mensaje de depuración para verificar agrupación</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (groupMode === 'rfc') {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>console.log('=== AGRUPACIÓN POR RFC COMPLETADA ===');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>console.log(`Total de RFCs únicos: ${Object.keys(comerciosAgrupados).length}`);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>console.log('\nEjemplo de RFC agrupado (el de mayor monto):');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const topRFC = Object.values(comerciosAgrupados)</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>.sort((a, b) =&gt; b.monto - a.monto)[0];</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (topRFC) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>console.log(`RFC: ${topRFC.rfc}`);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>console.log(`Registros agrupados: ${topRFC.registros}`);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>console.log(`Monto total acumulado: ${topRFC.monto.toLocaleString('es-MX')}`);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>console.log(`Transacciones totales: ${topRFC.transacciones}`);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>console.log(`Razones sociales incluidas: ${Array.from(topRFC.razonSocial).join(', ')}`);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>console.log(`Categorías: ${Array.from(topRFC.categories).join(', ')}`);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>console.log(`MCCs: ${Array.from(topRFC.mccs).join(', ')}`);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>console.log('\nDetalle de registros agrupados:');</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>topRFC.detalleRegistros.slice(0, 5).forEach((detalle, i) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>console.log(`<span class="Apple-converted-space">  </span>${i + 1}. ${detalle.razonSocial} - ${detalle.monto.toLocaleString('es-MX')} - ${detalle.transacciones} trans.`);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>});</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>if (topRFC.detalleRegistros.length &gt; 5) {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>console.log(`<span class="Apple-converted-space">  </span>... y ${topRFC.detalleRegistros.length - 5} registros más`);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>console.log('=====================================\n');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Convertir a array y ordenar por monto</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const comerciosArray = Object.values(comerciosAgrupados)</p>
+<p class="p1"><span class="Apple-converted-space">                </span>.filter(c =&gt; !c.key.startsWith('SIN_RFC_') || groupMode !== 'rfc') // Filtrar sin RFC solo en modo RFC</p>
+<p class="p1"><span class="Apple-converted-space">                </span>.map(c =&gt; ({</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>...c,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>razonSocialStr: Array.from(c.razonSocial).sort().join(', ') || 'N/A',</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>marcaStr: Array.from(c.marca).sort().join(', ') || 'N/A',</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>categoriesStr: Array.from(c.categories).sort().join(', '),</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>mccsStr: Array.from(c.mccs).sort().join(', ')</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}))</p>
+<p class="p1"><span class="Apple-converted-space">                </span>.sort((a, b) =&gt; b.monto - a.monto)</p>
+<p class="p1"><span class="Apple-converted-space">                </span>.slice(0, 50);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Calcular métricas del top 50</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const montoTop50 = comerciosArray.reduce((sum, c) =&gt; sum + c.monto, 0);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const transaccionesTop50 = comerciosArray.reduce((sum, c) =&gt; sum + c.transacciones, 0);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const shareTop50 = (montoTop50 / totalMonto) * 100;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Actualizar métricas en la UI</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('shareTop50').textContent = shareTop50.toFixed(2) + '%';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('montoTop50').textContent = formatMoney(montoTop50);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('transaccionesTop50').textContent = formatNumber(transaccionesTop50);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Actualizar encabezados de la tabla según el modo</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const tableHeaders = document.querySelector('#top50ShareTable thead tr');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>tableHeaders.innerHTML = `</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th style="width: 50px;"&gt;Rank&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th&gt;${groupMode === 'rfc' ? 'RFC' : 'Razón Social'}&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th&gt;${groupMode === 'rfc' ? 'Razones Sociales' : 'Marcas'}&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th&gt;Categorías&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th&gt;MCCs&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th&gt;Registros&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th&gt;${groupMode === 'rfc' ? 'Consumo Total Acumulado' : 'Volumen Venta'}&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th&gt;Transacciones&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th&gt;Share (%)&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th&gt;Share Acum. (%)&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th&gt;Ticket Prom.&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>`;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Llenar la tabla</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const tbody = document.getElementById('top50ShareBody');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>tbody.innerHTML = '';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let shareAcumulado = 0;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>comerciosArray.forEach((comercio, index) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const share = (comercio.monto / totalMonto) * 100;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>shareAcumulado += share;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const ticketPromedio = comercio.transacciones &gt; 0 ? comercio.monto / comercio.transacciones : 0;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>const tr = document.createElement('tr');</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (groupMode === 'rfc') {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const esRFCValido = !comercio.rfc.startsWith('SIN_RFC_');</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>tr.innerHTML = `</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td style="text-align: center; font-weight: bold;"&gt;${index + 1}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td style="font-weight: bold; ${!esRFCValido ? 'color: #dc3545;' : ''}"&gt;${comercio.rfc}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div style="max-height: 60px; overflow-y: auto; font-size: 12px;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>${comercio.razonSocialStr}</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div style="max-height: 60px; overflow-y: auto;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>${comercio.categoriesStr.split(', ').map(cat =&gt;<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>`&lt;span class="category-badge" style="margin: 2px; font-size: 11px;"&gt;${cat}&lt;/span&gt;`</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>).join('')}</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td style="font-size: 12px;"&gt;${comercio.mccsStr}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td style="text-align: center;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;span style="font-weight: bold; color: ${comercio.registros &gt; 1 ? '#28a745' : '#666'};"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>${comercio.registros}</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>${comercio.registros &gt; 1 ? '&lt;br&gt;&lt;small style="color: #28a745;"&gt;✓ Acumulado&lt;/small&gt;' : ''}</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td style="text-align: right; font-weight: bold; color: #28a745;"&gt;${formatMoney(comercio.monto)}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td style="text-align: right;"&gt;${formatNumber(comercio.transacciones)}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td style="text-align: right;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div style="display: flex; align-items: center; gap: 10px;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;span&gt;${share.toFixed(3)}%&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div class="share-bar" style="width: 60px;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;div class="share-fill" style="width: ${Math.min(share * 10, 100)}%"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td style="text-align: right; font-weight: bold;"&gt;${shareAcumulado.toFixed(2)}%&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td style="text-align: right;"&gt;${formatMoney(ticketPromedio)}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>tr.innerHTML = `</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td style="text-align: center; font-weight: bold;"&gt;${index + 1}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td&gt;${comercio.razonSocialStr}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td&gt;${comercio.marcaStr}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div style="max-height: 60px; overflow-y: auto;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>${comercio.categoriesStr.split(', ').map(cat =&gt;<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>`&lt;span class="category-badge" style="margin: 2px; font-size: 11px;"&gt;${cat}&lt;/span&gt;`</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>).join('')}</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td style="font-size: 12px;"&gt;${comercio.mccsStr}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td style="text-align: center;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;span style="font-weight: bold; color: ${comercio.registros &gt; 1 ? '#28a745' : '#666'};"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>${comercio.registros}</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>${comercio.registros &gt; 1 ? '&lt;br&gt;&lt;small style="color: #28a745;"&gt;✓ Acumulado&lt;/small&gt;' : ''}</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td style="text-align: right; font-weight: bold;"&gt;${formatMoney(comercio.monto)}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td style="text-align: right;"&gt;${formatNumber(comercio.transacciones)}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td style="text-align: right;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div style="display: flex; align-items: center; gap: 10px;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;span&gt;${share.toFixed(3)}%&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div class="share-bar" style="width: 60px;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;div class="share-fill" style="width: ${Math.min(share * 10, 100)}%"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td style="text-align: right; font-weight: bold;"&gt;${shareAcumulado.toFixed(2)}%&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td style="text-align: right;"&gt;${formatMoney(ticketPromedio)}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>tbody.appendChild(tr);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Crear gráfica de concentración</p>
+<p class="p1"><span class="Apple-converted-space">            </span>createConcentrationChart(comerciosArray, totalMonto);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Actualizar información de concentración</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const concentrationDiv = document.getElementById('concentrationInfo');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const totalRFCsConValor = Object.keys(comerciosAgrupados).filter(k =&gt; !k.startsWith('SIN_RFC_')).length;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const totalSinRFC = Object.keys(comerciosAgrupados).filter(k =&gt; k.startsWith('SIN_RFC_')).length;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>concentrationDiv.innerHTML = `</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h4&gt;📊 Análisis de Concentración por ${groupMode === 'rfc' ? 'RFC' : 'Razón Social'}&lt;/h4&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>${groupMode === 'rfc' ? `</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p&gt;• Total de RFCs únicos con valor: &lt;strong&gt;${totalRFCsConValor}&lt;/strong&gt;&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p&gt;• Registros sin RFC válido: &lt;strong&gt;${totalSinRFC}&lt;/strong&gt;&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>` : ''}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p&gt;• Los &lt;strong&gt;Top 10 ${groupMode === 'rfc' ? 'RFCs' : 'comercios'}&lt;/strong&gt; representan el &lt;strong&gt;${</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>comerciosArray.slice(0, 10).reduce((sum, c) =&gt; sum + (c.monto / totalMonto) * 100, 0).toFixed(2)</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}%&lt;/strong&gt; del volumen total&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p&gt;• Los &lt;strong&gt;Top 20 ${groupMode === 'rfc' ? 'RFCs' : 'comercios'}&lt;/strong&gt; representan el &lt;strong&gt;${</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>comerciosArray.slice(0, 20).reduce((sum, c) =&gt; sum + (c.monto / totalMonto) * 100, 0).toFixed(2)</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}%&lt;/strong&gt; del volumen total&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p&gt;• Los &lt;strong&gt;Top 50 ${groupMode === 'rfc' ? 'RFCs' : 'comercios'}&lt;/strong&gt; representan el &lt;strong&gt;${shareTop50.toFixed(2)}%&lt;/strong&gt; del volumen total&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p&gt;• Esto indica una ${shareTop50 &gt; 80 ? 'alta' : shareTop50 &gt; 60 ? 'moderada' : 'baja'} concentración del volumen en pocos ${groupMode === 'rfc' ? 'contribuyentes' : 'comercios'}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>${groupMode === 'rfc' ?<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>`&lt;p&gt;• &lt;strong&gt;Importante:&lt;/strong&gt; Cada RFC suma TODOS sus consumos, sin importar cuántas sucursales o razones sociales tenga&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                     </span>&lt;p&gt;• &lt;strong&gt;Nota:&lt;/strong&gt; Los registros sin RFC válido aparecen como "SIN_RFC_[nombre]" y no se agrupan entre sí&lt;/p&gt;` :<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>`&lt;p&gt;• &lt;strong&gt;Nota:&lt;/strong&gt; Los comercios están agrupados por razón social individual&lt;/p&gt;`</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function createConcentrationChart(comerciosArray, totalMonto) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const ctx = document.getElementById('concentrationChart').getContext('2d');</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Destruir gráfica anterior si existe</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (window.concentrationChartInstance) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>window.concentrationChartInstance.destroy();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Preparar datos para la curva de concentración</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const labels = comerciosArray.map((_, i) =&gt; i + 1);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const shareAcumuladoData = [];</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let acumulado = 0;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>comerciosArray.forEach(comercio =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>acumulado += (comercio.monto / totalMonto) * 100;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>shareAcumuladoData.push(acumulado);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>window.concentrationChartInstance = new Chart(ctx, {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>type: 'line',</p>
+<p class="p1"><span class="Apple-converted-space">                </span>data: {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>labels: labels,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>datasets: [{</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>label: 'Share Acumulado (%)',</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>data: shareAcumuladoData,</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>borderColor: '#007bff',</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>backgroundColor: 'rgba(0, 123, 255, 0.1)',</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>borderWidth: 3,</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>fill: true,</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>tension: 0.4,</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>pointRadius: 2,</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>pointHoverRadius: 5</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}]</p>
+<p class="p1"><span class="Apple-converted-space">                </span>},</p>
+<p class="p1"><span class="Apple-converted-space">                </span>options: {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>responsive: true,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>maintainAspectRatio: false,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>plugins: {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>title: {</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>display: true,</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>text: 'Curva de Concentración del Volumen de Ventas'</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>},</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>tooltip: {</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>callbacks: {</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>label: function(context) {</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>const comercio = comerciosArray[context.dataIndex];</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>const groupMode = document.getElementById('groupModeSelect').value;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>return [</p>
+<p class="p1"><span class="Apple-converted-space">                                        </span>`${groupMode === 'rfc' ? comercio.rfc : comercio.razonSocialStr}`,</p>
+<p class="p1"><span class="Apple-converted-space">                                        </span>`Share acumulado: ${context.parsed.y.toFixed(2)}%`,</p>
+<p class="p1"><span class="Apple-converted-space">                                        </span>`Monto: ${formatMoney(comercio.monto)}`</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>];</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>},</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>scales: {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>x: {</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>title: {</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>display: true,</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>text: 'Ranking'</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>},</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>y: {</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>title: {</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>display: true,</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>text: 'Share Acumulado (%)'</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>},</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>min: 0,</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>max: 100,</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>ticks: {</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>callback: function(value) {</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>return value + '%';</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function exportTop50ToCSV() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const table = document.getElementById('top50ShareTable');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const rows = table.querySelectorAll('tr');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let csv = [];</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Headers</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const headers = [];</p>
+<p class="p1"><span class="Apple-converted-space">            </span>rows[0].querySelectorAll('th').forEach(th =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>headers.push('"' + th.textContent.replace(/"/g, '""') + '"');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">            </span>csv.push(headers.join(','));</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Data</p>
+<p class="p1"><span class="Apple-converted-space">            </span>for (let i = 1; i &lt; rows.length; i++) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const row = rows[i];</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const data = [];</p>
+<p class="p1"><span class="Apple-converted-space">                </span>row.querySelectorAll('td').forEach(td =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>// Limpiar el texto de caracteres especiales y formatos</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>let text = td.textContent.trim();</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>text = text.replace(/[$,]/g, ''); // Remover símbolos de moneda y comas</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>data.push('"' + text.replace(/"/g, '""') + '"');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>});</p>
+<p class="p1"><span class="Apple-converted-space">                </span>csv.push(data.join(','));</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Descargar</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const blob = new Blob([csv.join('\n')], { type: 'text/csv;charset=utf-8;' });</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const link = document.createElement('a');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const url = URL.createObjectURL(blob);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>link.setAttribute('href', url);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>link.setAttribute('download', 'top50_comercios_share.csv');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>link.style.visibility = 'hidden';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.body.appendChild(link);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>link.click();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.body.removeChild(link);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function showRFCAnalysis() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const modal = document.getElementById('rfcAnalysisModal');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const content = document.getElementById('rfcAnalysisContent');</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Agrupar por RFC para análisis</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const rfcAnalysis = {};</p>
+<p class="p1"><span class="Apple-converted-space">            </span>processedData.forEach(row =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const rfcNormalizado = (row.RFC || '').toString().trim().toUpperCase();</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (rfcNormalizado &amp;&amp; rfcNormalizado !== 'N/A' &amp;&amp; rfcNormalizado !== '') {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>if (!rfcAnalysis[rfcNormalizado]) {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>rfcAnalysis[rfcNormalizado] = {</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>rfc: rfcNormalizado,</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>razonesSociales: new Set(),</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>marcas: new Set(),</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>categorias: new Set(),</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>monto: 0,</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>transacciones: 0,</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>registros: 0</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>};</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
+<p class="p2"><span class="Apple-converted-space">                    </span></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const razonSocial = row['Razon _Social'] || row.razon_social;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>if (razonSocial) rfcAnalysis[rfcNormalizado].razonesSociales.add(razonSocial);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>if (row.MARCA) rfcAnalysis[rfcNormalizado].marcas.add(row.MARCA);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>rfcAnalysis[rfcNormalizado].categorias.add(row.category);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>rfcAnalysis[rfcNormalizado].monto += row.monto;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>rfcAnalysis[rfcNormalizado].transacciones += row.transacciones;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>rfcAnalysis[rfcNormalizado].registros++;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Convertir a array y ordenar</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const rfcArray = Object.values(rfcAnalysis)</p>
+<p class="p1"><span class="Apple-converted-space">                </span>.sort((a, b) =&gt; b.monto - a.monto)</p>
+<p class="p1"><span class="Apple-converted-space">                </span>.slice(0, 20);</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>let html = `</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h4&gt;Top 20 RFC con Mayor Consumo Acumulado&lt;/h4&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;table style="width: 100%; margin-top: 20px;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;thead&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;th&gt;RFC&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;th&gt;Razones Sociales&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;th&gt;Consumo Total&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;th&gt;Transacciones&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;th&gt;Registros&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/thead&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;tbody&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>`;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>rfcArray.forEach(rfc =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>html += `</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td style="font-weight: bold;"&gt;${rfc.rfc}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td&gt;${Array.from(rfc.razonesSociales).join('&lt;br&gt;')}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td style="text-align: right; font-weight: bold;"&gt;${formatMoney(rfc.monto)}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td style="text-align: right;"&gt;${formatNumber(rfc.transacciones)}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;td style="text-align: center;"&gt;${rfc.registros}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>html += '&lt;/tbody&gt;&lt;/table&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>content.innerHTML = html;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>modal.style.display = 'block';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function closeRFCAnalysis() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('rfcAnalysisModal').style.display = 'none';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function showTab(tabName) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Ocultar todos los tabs</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.querySelectorAll('.tab-content').forEach(tab =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>tab.classList.remove('active');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.querySelectorAll('.tab').forEach(tab =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>tab.classList.remove('active');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Mostrar el tab seleccionado</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById(tabName).classList.add('active');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>event.target.classList.add('active');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function filterTable(tableId, searchTerm) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const table = document.getElementById(tableId);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const rows = table.getElementsByTagName('tr');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const search = searchTerm.toLowerCase();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>for (let i = 1; i &lt; rows.length; i++) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const row = rows[i];</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const text = row.textContent.toLowerCase();</p>
+<p class="p1"><span class="Apple-converted-space">                </span>row.style.display = text.includes(search) ? '' : 'none';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
